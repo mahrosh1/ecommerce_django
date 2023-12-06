@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load cart %}
+
+<div class="container-fluid mt-3">
+<div class="row">
+  <div class="col-lg-2 mx-auto">
+    <div class="list-group">
+      {% for x in categories %}
+      <a href="/?category={{x.id}}" class="list-group-item list-group-item-action ">{{x.name}}</a>
+      {% endfor%}
+    </div>
+  </div>
+
+  <div id="products" class="col-lg-10 mx-auto">
+  <div class="row mx-auto" >
+    {% for x in allproducts %}
+    <div class="card mx-auto mb-3" id="{{x.id}}" style="width: 18rem; ">
+        <img src="/picture/{{x.image}}"class="card-img-top" alt="...">
+        <div class="card-body">
+          <h5 class="card-title">{{x.name}}</h5>
+          <p class="card-text"><b>{{x.price|currency}} </b></p>
+        </div>
+
+
+        <div class="card-footer p-0 no-gutters " style="border: 0;"   >
+        {% if x|is_in_cart:request.session.cart %}
+        <div class="row no-gutters">
+
+            <form action="/#{{x.id}}" method="POST" class="col-2">
+              {% csrf_token %}
+              <input type="text"  value="{{x.id}}" name="products_id" hidden>
+              <input type="text"  value="True" name="remove" hidden>
+              <input type="submit" value=" - " class=" btn btn-block btn-secondary">
+              </form>
+
+            <div class="text-center col">{{x|count_cart:request.session.cart }} in  Cart</div>
+            
+            <form action="/#{{x.id}}" method="POST" class="col-2">
+            {% csrf_token %}
+            <input type="text"  value="{{x.id}}" name="products_id" hidden>
+            <input type="submit" value=" + " class=" btn btn-block btn-secondary">
+            </form>
+
+        </div>
+
+        {% else %}
+        <form action="/#{{x.id}}" method="POST" class="btn-block">
+          {% csrf_token %}
+        <input type="text"  value="{{x.id}}" name="products_id" hidden>
+        <input type="submit" class=" btn-primary btn-block btn-sm" value="Add To Cart">
+        </form>
+       {% endif %}
+      </div>
+
+    </div>
+    {% endfor%}
+    {% endblock %}
+  </div>
+  </div>  
+</div>  
+</div>
